@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Robot, User, ArrowUp, Star } from '@phosphor-icons/react'
+import { Robot, User, ArrowUp } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 export interface ChatMessage {
@@ -177,25 +177,25 @@ Be supportive, knowledgeable, and practical in your responses.`
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <Star className="w-4 h-4 text-primary" />
+              <Robot className="w-4 h-4 text-primary" />
             </div>
             AI Learning Coach
           </CardTitle>
         </CardHeader>
       )}
       <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
-          <div className="space-y-4 pb-4">
+        <ScrollArea className="flex-1 px-4 py-4" ref={scrollAreaRef}>
+          <div className="space-y-3">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={cn(
-                  "flex gap-3",
+                  "flex gap-3 items-start",
                   message.role === 'user' ? 'justify-end' : 'justify-start'
                 )}
               >
                 {message.role === 'assistant' && (
-                  <Avatar className="w-8 h-8 shrink-0">
+                  <Avatar className="w-8 h-8 shrink-0 mt-0.5">
                     <AvatarFallback className="bg-primary/10">
                       <Robot className="w-4 h-4 text-primary" />
                     </AvatarFallback>
@@ -203,17 +203,17 @@ Be supportive, knowledgeable, and practical in your responses.`
                 )}
                 <div
                   className={cn(
-                    "max-w-[80%] px-3 py-2 rounded-lg text-sm",
+                    "max-w-[75%] px-4 py-3 rounded-xl text-sm leading-relaxed",
                     message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted',
-                    isFloating && "px-3 py-2"
+                      ? 'bg-primary text-primary-foreground rounded-br-md'
+                      : 'bg-muted text-foreground rounded-bl-md',
+                    isFloating && "max-w-[80%] px-3 py-2.5"
                   )}
                 >
                   {message.content}
                 </div>
                 {message.role === 'user' && (
-                  <Avatar className="w-8 h-8 shrink-0">
+                  <Avatar className="w-8 h-8 shrink-0 mt-0.5">
                     <AvatarFallback className="bg-secondary">
                       <User className="w-4 h-4" />
                     </AvatarFallback>
@@ -222,13 +222,13 @@ Be supportive, knowledgeable, and practical in your responses.`
               </div>
             ))}
             {isLoading && (
-              <div className="flex gap-3 justify-start">
-                <Avatar className="w-8 h-8 shrink-0">
+              <div className="flex gap-3 justify-start items-start">
+                <Avatar className="w-8 h-8 shrink-0 mt-0.5">
                   <AvatarFallback className="bg-primary/10">
                     <Robot className="w-4 h-4 text-primary" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-muted px-3 py-2 rounded-lg text-sm">
+                <div className="bg-muted px-4 py-3 rounded-xl rounded-bl-md text-sm">
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />

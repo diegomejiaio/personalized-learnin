@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { GraduationCap, Target, Clock, Users, CheckCircle, ArrowRight, Play, User, Circle, ArrowCounterClockwise } from '@phosphor-icons/react'
 import { UserProfile } from '../App'
 import LearningPath from './LearningPath'
@@ -136,15 +137,33 @@ export default function Dashboard({ userProfile, onResetSetup }: DashboardProps)
                 <CardTitle className="text-lg">Your Skills</CardTitle>
                 <CardDescription>Current expertise and learning goals</CardDescription>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onResetSetup}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <ArrowCounterClockwise className="w-4 h-4 mr-2" />
-                Reset Setup
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <ArrowCounterClockwise className="w-4 h-4 mr-2" />
+                    Reset Setup
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reset Learning Setup</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will reset your learning profile and take you back to the onboarding process. 
+                      Your current progress and chat history will be preserved, but you'll need to set up your skills and goals again.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onResetSetup}>
+                      Reset Setup
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </CardHeader>
           <CardContent>
