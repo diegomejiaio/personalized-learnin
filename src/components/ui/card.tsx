@@ -8,11 +8,15 @@ function Card({ className, ...props }: ComponentProps<"div">) {
       data-slot="card"
       className={cn(
         "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
+        className,
+        "bg-card text-card-foreground flex flex-col gap-4 rounded-xl border py-6 shadow-sm flex-1",
+        "bg-card text-card-foreground flex flex-col gap- rounded-xl border py-6 shadow-sm flex-1",
+        "bg-card text-card-foreground flex flex-col gap-4 rounded-xl border py- shadow-sm flex-1",
+        "bg-card text-card-foreground flex flex-col gap-4 rounded-xl border py-4 shadow-sm flex-1"
       )}
       {...props}
     />
-  )
+  );
 }
 
 function CardHeader({ className, ...props }: ComponentProps<"div">) {
