@@ -16,13 +16,14 @@ export interface ChatMessage {
 }
 
 interface ChatProps {
-  context: 'onboarding' | 'dashboard'
+  context: 'onboarding' | 'dashboard' | 'floating-coach'
   userProfile?: any
   onDataCollection?: (data: any) => void
   className?: string
+  isFloating?: boolean
 }
 
-export default function Chat({ context, userProfile, onDataCollection, className }: ChatProps) {
+export default function Chat({ context, userProfile, onDataCollection, className, isFloating = false }: ChatProps) {
   const [messages, setMessages] = useKV<ChatMessage[]>(`chat-messages-${context}`, [])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -54,6 +55,12 @@ export default function Chat({ context, userProfile, onDataCollection, className
       dashboard: {
         id: 'welcome-dashboard',
         content: `Welcome back! I'm here to help you with your learning journey. I can help you with your current progress, suggest next steps, answer questions about your learning path, or discuss any challenges you're facing. How can I assist you today?`,
+        role: 'assistant' as const,
+        timestamp: new Date()
+      },
+      'floating-coach': {
+        id: 'welcome-floating',
+        content: `Hi there! 👋 I'm your AI Learning Coach, ready to help whenever you need me. I can assist with your learning progress, answer questions, or provide guidance. What would you like to know?`,
         role: 'assistant' as const,
         timestamp: new Date()
       }
@@ -166,14 +173,16 @@ Be supportive, knowledgeable, and practical in your responses.`
 
   return (
     <Card className={cn("flex flex-col h-full", className)}>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary" />
-          </div>
-          AI Learning Coach
-        </CardTitle>
-      </CardHeader>
+      {!isFloating && (
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-primary" />
+            </div>
+            AI Learning Coach
+          </CardTitle>
+        </CardHeader>
+      )}
       <CardContent className="flex-1 flex flex-col p-0">
         <ScrollArea className="flex-1 px-6" ref={scrollAreaRef}>
           <div className="space-y-4 pb-4">
@@ -194,10 +203,11 @@ Be supportive, knowledgeable, and practical in your responses.`
                 )}
                 <div
                   className={cn(
-                    "max-w-[80%] px-4 py-2 rounded-lg text-sm",
+                    "max-w-[80%] px-3 py-2 rounded-lg text-sm",
                     message.role === 'user'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
+                      : 'bg-muted',
+                    isFloating && "px-3 py-2"
                   )}
                 >
                   {message.content}
@@ -218,7 +228,7 @@ Be supportive, knowledgeable, and practical in your responses.`
                     <Bot className="w-4 h-4 text-primary" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-muted px-4 py-2 rounded-lg text-sm">
+                <div className="bg-muted px-3 py-2 rounded-lg text-sm">
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
@@ -229,7 +239,7 @@ Be supportive, knowledgeable, and practical in your responses.`
             )}
           </div>
         </ScrollArea>
-        <div className="border-t p-4">
+        <div className={cn("border-t p-4", isFloating && "p-3")}>
           <div className="flex gap-2">
             <Input
               placeholder="Type your message..."
