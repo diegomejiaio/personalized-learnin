@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,12 +11,20 @@ import { Progress } from '@/components/ui/progress'
 import { Bot, User, Plus, X, ArrowRight } from '@phosphor-icons/react'
 import { UserProfile } from '../App'
 
+interface Message {
+  id: string
+  type: 'bot' | 'user'
+  content: React.ReactNode
+  timestamp: Date
+}
+
 interface ConversationalOnboardingProps {
   onComplete: (profile: UserProfile) => void
 }
 
 export default function ConversationalOnboarding({ onComplete }: ConversationalOnboardingProps) {
   const [currentStep, setCurrentStep] = useState(1)
+  const [messages, setMessages] = useState<Message[]>([])
   const [skills, setSkills] = useState<string[]>([])
   const [newSkill, setNewSkill] = useState('')
   const [goals, setGoals] = useState('')
@@ -25,6 +33,38 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
   const [hasSpecialNeeds, setHasSpecialNeeds] = useState(false)
   const [specialNeeds, setSpecialNeeds] = useState('')
   const [learningStyle, setLearningStyle] = useState('')
+  const [showCurrentInput, setShowCurrentInput] = useState(true)
+  
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  // Initialize with welcome message
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([{
+        id: '1',
+        type: 'bot',
+        content: "Hi there! 👋 I'm your learning coach. Let's start by understanding your current expertise. What technical skills do you already have?",
+        timestamp: new Date()
+      }])
+    }
+  }, [])
+
+  const addMessage = (type: 'bot' | 'user', content: React.ReactNode) => {
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      type,
+      content,
+      timestamp: new Date()
+    }
+    setMessages(prev => [...prev, newMessage])
+  }
 
   const addSkill = () => {
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {
@@ -33,23 +73,100 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
     }
   }
 
+  const addSuggestedSkill = (skill: string) => {
+    if (!skills.includes(skill)) {
+      setSkills([...skills, skill])
+    }
+  }
+
   const removeSkill = (skillToRemove: string) => {
     setSkills(skills.filter(skill => skill !== skillToRemove))
   }
 
-  const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1)
-    } else {
-      onComplete({
-        skills,
-        goals,
-        coachingFrequency,
-        timePerWeek: timePerWeek[0],
-        hasSpecialNeeds,
-        specialNeeds,
-        learningStyle
-      })
+  const handleStepComplete = () => {
+    let userResponse: React.ReactNode = null
+    let nextBotMessage: string = ''
+
+    switch (currentStep) {
+      case 1:
+        if (skills.length === 0) return
+        userResponse = (
+          <div className="space-y-2">
+            <p className="text-sm">My current skills:</p>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill) => (
+                <Badge key={skill} variant="secondary">{skill}</Badge>
+              ))}
+            </div>
+          </div>
+        )
+        nextBotMessage = "Great! Now, what are your learning goals? What would you like to achieve or learn next?"
+        break
+      
+      case 2:
+        if (!goals.trim()) return
+        userResponse = (
+          <div className="space-y-1">
+            <p className="text-sm font-medium">My learning goals:</p>
+            <p className="text-sm">{goals}</p>
+          </div>
+        )
+        nextBotMessage = "Perfect! Let's set up your coaching schedule. How often would you like coaching sessions, and how much time can you dedicate to learning each week?"
+        break
+      
+      case 3:
+        userResponse = (
+          <div className="space-y-2">
+            <p className="text-sm"><strong>Coaching frequency:</strong> {coachingFrequency} sessions</p>
+            <p className="text-sm"><strong>Time commitment:</strong> {timePerWeek[0]} hours per week</p>
+          </div>
+        )
+        nextBotMessage = "Almost done! Do you have any specific learning needs or preferences I should know about to personalize your experience?"
+        break
+      
+      case 4:
+        userResponse = hasSpecialNeeds ? (
+          <div className="space-y-2">
+            <p className="text-sm"><strong>Special needs:</strong> Yes</p>
+            {specialNeeds && <p className="text-sm"><strong>Details:</strong> {specialNeeds}</p>}
+            {learningStyle && <p className="text-sm"><strong>Learning style:</strong> {learningStyle}</p>}
+          </div>
+        ) : (
+          <p className="text-sm">No special learning needs</p>
+        )
+        
+        // Complete onboarding
+        setTimeout(() => {
+          addMessage('bot', "Perfect! I have everything I need to create your personalized learning journey. Let's get started! 🚀")
+          setTimeout(() => {
+            onComplete({
+              skills,
+              goals,
+              coachingFrequency,
+              timePerWeek: timePerWeek[0],
+              hasSpecialNeeds,
+              specialNeeds,
+              learningStyle
+            })
+          }, 1500)
+        }, 500)
+        break
+    }
+
+    // Add user response
+    if (userResponse) {
+      addMessage('user', userResponse)
+    }
+
+    // Hide current input and show next bot message
+    setShowCurrentInput(false)
+    
+    if (nextBotMessage && currentStep < 4) {
+      setTimeout(() => {
+        addMessage('bot', nextBotMessage)
+        setCurrentStep(currentStep + 1)
+        setShowCurrentInput(true)
+      }, 1000)
     }
   }
 
@@ -65,22 +182,6 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
 
   const progress = (currentStep / 4) * 100
 
-  // Conversational prompts for each step
-  const getConversationalPrompt = () => {
-    switch (currentStep) {
-      case 1:
-        return "Hi there! 👋 I'm your learning coach. Let's start by understanding your current expertise. What technical skills do you already have?"
-      case 2:
-        return "Great! Now, what are your learning goals? What would you like to achieve or learn next?"
-      case 3:
-        return "Perfect! Let's set up your coaching schedule. How often would you like coaching sessions, and how much time can you dedicate to learning each week?"
-      case 4:
-        return "Almost done! Do you have any specific learning needs or preferences I should know about to personalize your experience?"
-      default:
-        return ""
-    }
-  }
-
   const getBotAvatar = () => (
     <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
       <Bot className="w-5 h-5 text-primary" />
@@ -93,6 +194,177 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
     </div>
   )
 
+  const renderCurrentInput = () => {
+    if (!showCurrentInput) return null
+
+    return (
+      <div className="flex gap-3 items-start animate-in fade-in-50 duration-500">
+        {getUserAvatar()}
+        <Card className="flex-1">
+          <CardContent className="p-4 space-y-4">
+            {currentStep === 1 && (
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Type a skill and press Enter"
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                    className="flex-1"
+                  />
+                  <Button onClick={addSkill} size="icon" variant="outline">
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                {/* Skill Suggestions */}
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-muted-foreground">Popular skills to get you started:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      'Azure', 'Kubernetes', 'React', 'Python'
+                    ].filter(suggestion => !skills.includes(suggestion)).map((suggestion) => (
+                      <Button
+                        key={suggestion}
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs justify-start px-2 hover:bg-primary/10 hover:border-primary/30"
+                        onClick={() => addSuggestedSkill(suggestion)}
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                
+                {skills.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Your skills:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {skills.map((skill) => (
+                        <Badge key={skill} variant="secondary" className="px-3 py-1">
+                          {skill}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-1 ml-2 hover:bg-destructive/20"
+                            onClick={() => removeSkill(skill)}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentStep === 2 && (
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Tell me about your learning goals..."
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                  rows={4}
+                  className="resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Examples: "Azure AI L200 certification", "Kubernetes fundamentals", "Advanced React patterns"
+                </p>
+              </div>
+            )}
+
+            {currentStep === 3 && (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium mb-2">How often would you like coaching sessions?</p>
+                  <Select value={coachingFrequency} onValueChange={(value: any) => setCoachingFrequency(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weekly">Weekly sessions</SelectItem>
+                      <SelectItem value="biweekly">Bi-weekly sessions</SelectItem>
+                      <SelectItem value="monthly">Monthly sessions</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <p className="text-sm font-medium mb-2">Time you can dedicate per week:</p>
+                  <div className="px-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-muted-foreground">1 hour</span>
+                      <span className="text-lg font-semibold text-primary">{timePerWeek[0]} hours</span>
+                      <span className="text-sm text-muted-foreground">20 hours</span>
+                    </div>
+                    <Slider
+                      value={timePerWeek}
+                      onValueChange={setTimePerWeek}
+                      max={20}
+                      min={1}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 border rounded-md">
+                  <div>
+                    <p className="text-sm font-medium">I have special learning needs</p>
+                    <p className="text-xs text-muted-foreground">
+                      Learning disabilities, preferences, or accommodations
+                    </p>
+                  </div>
+                  <Switch checked={hasSpecialNeeds} onCheckedChange={setHasSpecialNeeds} />
+                </div>
+                
+                {hasSpecialNeeds && (
+                  <div className="space-y-3 pt-2 animate-in fade-in-50 duration-300">
+                    <Textarea
+                      placeholder="Describe your learning accommodations or preferences..."
+                      value={specialNeeds}
+                      onChange={(e) => setSpecialNeeds(e.target.value)}
+                      rows={3}
+                      className="resize-none"
+                    />
+                    <Input
+                      placeholder="Preferred learning style (e.g., visual, auditory, hands-on)"
+                      value={learningStyle}
+                      onChange={(e) => setLearningStyle(e.target.value)}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Continue Button */}
+            <div className="flex justify-end pt-2">
+              <Button 
+                onClick={handleStepComplete} 
+                disabled={!canProceed()}
+                className="px-6"
+              >
+                {currentStep === 4 ? 'Complete Setup' : (
+                  <>
+                    Continue
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto max-w-2xl p-4">
@@ -104,187 +376,27 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
           <p className="text-sm text-muted-foreground mt-2">Step {currentStep} of 4</p>
         </div>
 
-        {/* Conversational Interface */}
-        <div className="space-y-6 max-w-xl mx-auto">
-          {/* Bot Message */}
-          <div className="flex gap-3 items-start">
-            {getBotAvatar()}
-            <Card className="flex-1 bg-primary/5 border-primary/20">
-              <CardContent className="p-4">
-                <p className="text-sm leading-relaxed">{getConversationalPrompt()}</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* User Response Area */}
-          <div className="flex gap-3 items-start">
-            {getUserAvatar()}
-            <Card className="flex-1">
-              <CardContent className="p-4 space-y-4">
-                {currentStep === 1 && (
-                  <div className="space-y-4">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Type a skill and press Enter"
-                        value={newSkill}
-                        onChange={(e) => setNewSkill(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addSkill()}
-                        className="flex-1"
-                      />
-                      <Button onClick={addSkill} size="icon" variant="outline">
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    
-                    {/* Skill Suggestions */}
-                    <div className="space-y-3">
-                      <p className="text-sm font-medium text-muted-foreground">Popular skills to get you started:</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {[
-                          'Azure', 'Kubernetes', 'React', 'Python'
-                        ].filter(suggestion => !skills.includes(suggestion)).map((suggestion) => (
-                          <Button
-                            key={suggestion}
-                            variant="outline"
-                            size="sm"
-                            className="h-8 text-xs justify-start px-2 hover:bg-primary/10 hover:border-primary/30"
-                            onClick={() => {
-                              if (!skills.includes(suggestion)) {
-                                setSkills([...skills, suggestion])
-                              }
-                            }}
-                          >
-                            <Plus className="w-3 h-3 mr-1" />
-                            {suggestion}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {skills.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Your skills:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {skills.map((skill) => (
-                            <Badge key={skill} variant="secondary" className="px-3 py-1">
-                              {skill}
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-auto p-1 ml-2 hover:bg-destructive/20"
-                                onClick={() => removeSkill(skill)}
-                              >
-                                <X className="w-3 h-3" />
-                              </Button>
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {currentStep === 2 && (
-                  <div className="space-y-2">
-                    <Textarea
-                      placeholder="Tell me about your learning goals..."
-                      value={goals}
-                      onChange={(e) => setGoals(e.target.value)}
-                      rows={4}
-                      className="resize-none"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Examples: "Azure AI L200 certification", "Kubernetes fundamentals", "Advanced React patterns"
-                    </p>
-                  </div>
-                )}
-
-                {currentStep === 3 && (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm font-medium mb-2">How often would you like coaching sessions?</p>
-                      <Select value={coachingFrequency} onValueChange={(value: any) => setCoachingFrequency(value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="weekly">Weekly sessions</SelectItem>
-                          <SelectItem value="biweekly">Bi-weekly sessions</SelectItem>
-                          <SelectItem value="monthly">Monthly sessions</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <p className="text-sm font-medium mb-2">Time you can dedicate per week:</p>
-                      <div className="px-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-muted-foreground">1 hour</span>
-                          <span className="text-lg font-semibold text-primary">{timePerWeek[0]} hours</span>
-                          <span className="text-sm text-muted-foreground">20 hours</span>
-                        </div>
-                        <Slider
-                          value={timePerWeek}
-                          onValueChange={setTimePerWeek}
-                          max={20}
-                          min={1}
-                          step={1}
-                          className="w-full"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {currentStep === 4 && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 border rounded-md">
-                      <div>
-                        <p className="text-sm font-medium">I have special learning needs</p>
-                        <p className="text-xs text-muted-foreground">
-                          Learning disabilities, preferences, or accommodations
-                        </p>
-                      </div>
-                      <Switch checked={hasSpecialNeeds} onCheckedChange={setHasSpecialNeeds} />
-                    </div>
-                    
-                    {hasSpecialNeeds && (
-                      <div className="space-y-3 pt-2">
-                        <Textarea
-                          placeholder="Describe your learning accommodations or preferences..."
-                          value={specialNeeds}
-                          onChange={(e) => setSpecialNeeds(e.target.value)}
-                          rows={3}
-                          className="resize-none"
-                        />
-                        <Input
-                          placeholder="Preferred learning style (e.g., visual, auditory, hands-on)"
-                          value={learningStyle}
-                          onChange={(e) => setLearningStyle(e.target.value)}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Continue Button */}
-          <div className="flex justify-end pt-4">
-            <Button 
-              onClick={handleNext} 
-              disabled={!canProceed()}
-              className="px-6"
-            >
-              {currentStep === 4 ? 'Complete Setup' : (
-                <>
-                  Continue
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </Button>
-          </div>
+        {/* Chat Messages */}
+        <div className="max-w-xl mx-auto space-y-6 pb-6 max-h-[60vh] overflow-y-auto">
+          {messages.map((message) => (
+            <div key={message.id} className={`flex gap-3 items-start animate-in fade-in-50 duration-500`}>
+              {message.type === 'bot' ? getBotAvatar() : getUserAvatar()}
+              <Card className={`flex-1 ${message.type === 'bot' ? 'bg-primary/5 border-primary/20' : ''}`}>
+                <CardContent className="p-4">
+                  {typeof message.content === 'string' ? (
+                    <p className="text-sm leading-relaxed">{message.content}</p>
+                  ) : (
+                    message.content
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+          
+          {/* Current Input */}
+          {renderCurrentInput()}
+          
+          <div ref={messagesEndRef} />
         </div>
       </div>
     </div>
