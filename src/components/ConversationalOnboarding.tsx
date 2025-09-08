@@ -369,7 +369,7 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
     <div className="min-h-screen bg-background">
       <div className="container mx-auto max-w-2xl p-4">
         {/* Header */}
-        <div className="text-center mb-8 pt-8">
+        <div className="text-center mb-8 pt-8 font-light">
           <h1 className="text-3xl font-semibold mb-2">Learning Coach Setup</h1>
           <p className="text-muted-foreground mb-6">Let's get to know each other</p>
           <Progress value={progress} className="h-2 max-w-md mx-auto" />
@@ -400,5 +400,5 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
         </div>
       </div>
     </div>
-  )
+  );
 }
