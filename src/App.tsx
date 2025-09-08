@@ -23,6 +23,11 @@ function App() {
     setOnboardingComplete(true)
   }
 
+  const handleResetSetup = () => {
+    setUserProfile(null)
+    setOnboardingComplete(false)
+  }
+
   if (!onboardingComplete || !userProfile) {
     return (
       <>
@@ -34,7 +39,7 @@ function App() {
 
   return (
     <>
-      <Dashboard userProfile={userProfile} />
+      <Dashboard userProfile={userProfile} onResetSetup={handleResetSetup} />
       <Toaster />
     </>
   )

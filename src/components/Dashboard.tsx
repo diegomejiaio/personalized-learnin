@@ -17,6 +17,7 @@ import FloatingAICoach from './FloatingAICoach'
 
 interface DashboardProps {
   userProfile: UserProfile
+  onResetSetup: () => void
 }
 
 interface LearningProgress {
@@ -27,7 +28,7 @@ interface LearningProgress {
   estimatedCompletion: string
 }
 
-export default function Dashboard({ userProfile }: DashboardProps) {
+export default function Dashboard({ userProfile, onResetSetup }: DashboardProps) {
   const [learningProgress] = useKV<LearningProgress>('learning-progress', {
     completedModules: 3,
     totalModules: 12,
@@ -35,14 +36,6 @@ export default function Dashboard({ userProfile }: DashboardProps) {
     nextMilestone: 'Azure Fundamentals Assessment',
     estimatedCompletion: '2 weeks'
   })
-
-  const [, setUserProfile] = useKV<UserProfile | null>('user-profile', null)
-  const [, setOnboardingComplete] = useKV('onboarding-complete', false)
-
-  const handleResetSetup = () => {
-    setUserProfile(null)
-    setOnboardingComplete(false)
-  }
 
   const progressPercentage = (learningProgress.completedModules / learningProgress.totalModules) * 100
 
@@ -146,7 +139,7 @@ export default function Dashboard({ userProfile }: DashboardProps) {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={handleResetSetup}
+                onClick={onResetSetup}
                 className="text-muted-foreground hover:text-foreground"
               >
                 <ArrowCounterClockwise className="w-4 h-4 mr-2" />
