@@ -139,11 +139,9 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
                     {/* Skill Suggestions */}
                     <div className="space-y-3">
                       <p className="text-sm font-medium text-muted-foreground">Popular skills to get you started:</p>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {[
-                          'Azure', 'AWS', 'Kubernetes', 'Docker', 'React', 'Node.js',
-                          'Python', 'C#', '.NET', 'JavaScript', 'TypeScript', 'SQL',
-                          'DevOps', 'CI/CD', 'Terraform', 'PowerShell', 'Git', 'Agile'
+                          'Azure', 'Kubernetes', 'React', 'Python'
                         ].filter(suggestion => !skills.includes(suggestion)).map((suggestion) => (
                           <Button
                             key={suggestion}
