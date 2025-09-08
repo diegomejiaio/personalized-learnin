@@ -366,37 +366,118 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-2xl p-4">
-        {/* Header */}
-        <div className="text-center mb-8 pt-8 font-light">
-          <h1 className="text-3xl font-semibold mb-2">Learning Coach Setup</h1>
-          <p className="text-muted-foreground mb-6">Let's get to know each other</p>
-          <Progress value={progress} className="h-2 max-w-md mx-auto" />
-          <p className="text-sm text-muted-foreground mt-2">Step {currentStep} of 4</p>
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+      {/* Mobile Header with Progress */}
+      <div className="lg:hidden border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="p-4">
+          <h1 className="text-xl font-semibold mb-1">Learning Coach Setup</h1>
+          <p className="text-sm text-muted-foreground mb-3">Let's get to know each other</p>
+          <Progress value={progress} className="h-2 mb-2" />
+          <p className="text-xs text-muted-foreground">Step {currentStep} of 4</p>
+        </div>
+      </div>
+
+      {/* Main Chat Section */}
+      <div className="flex-1 flex flex-col">
+        {/* Desktop Header */}
+        <div className="hidden lg:block border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="container mx-auto p-6">
+            <div className="max-w-2xl">
+              <h1 className="text-3xl font-semibold mb-2">Learning Coach Setup</h1>
+              <p className="text-muted-foreground">Let's get to know each other</p>
+            </div>
+          </div>
         </div>
 
         {/* Chat Messages */}
-        <div className="max-w-xl mx-auto space-y-6 pb-6 max-h-[60vh] overflow-y-auto">
-          {messages.map((message) => (
-            <div key={message.id} className={`flex gap-3 items-start animate-in fade-in-50 duration-500`}>
-              {message.type === 'bot' ? getBotAvatar() : getUserAvatar()}
-              <Card className={`flex-1 ${message.type === 'bot' ? 'bg-primary/5 border-primary/20' : ''}`}>
-                <CardContent className="px-4 py-2">
-                  {typeof message.content === 'string' ? (
-                    <p className="text-sm leading-relaxed">{message.content}</p>
-                  ) : (
-                    message.content
-                  )}
-                </CardContent>
-              </Card>
+        <div className="flex-1 overflow-hidden">
+          <div className="container mx-auto h-full">
+            <div className="max-w-2xl h-full flex flex-col">
+              <div className="flex-1 space-y-6 p-4 lg:p-6 overflow-y-auto">
+                {messages.map((message) => (
+                  <div key={message.id} className={`flex gap-3 items-start animate-in fade-in-50 duration-500`}>
+                    {message.type === 'bot' ? getBotAvatar() : getUserAvatar()}
+                    <Card className={`flex-1 ${message.type === 'bot' ? 'bg-primary/5 border-primary/20' : ''}`}>
+                      <CardContent className="px-4 py-2">
+                        {typeof message.content === 'string' ? (
+                          <p className="text-sm leading-relaxed">{message.content}</p>
+                        ) : (
+                          message.content
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+                
+                {/* Current Input */}
+                {renderCurrentInput()}
+                
+                <div ref={messagesEndRef} />
+              </div>
             </div>
-          ))}
-          
-          {/* Current Input */}
-          {renderCurrentInput()}
-          
-          <div ref={messagesEndRef} />
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side Panel - Progress Stepper (Desktop Only) */}
+      <div className="hidden lg:block w-80 border-l bg-card/30 backdrop-blur-sm">
+        <div className="p-6 h-full flex flex-col">
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-2">Setup Progress</h2>
+            <Progress value={progress} className="h-2 mb-2" />
+            <p className="text-sm text-muted-foreground">Step {currentStep} of 4</p>
+          </div>
+
+          {/* Step Indicators */}
+          <div className="space-y-4 flex-1">
+            {[
+              { step: 1, title: 'Current Skills', desc: 'Tell us what you already know' },
+              { step: 2, title: 'Learning Goals', desc: 'What do you want to achieve?' },
+              { step: 3, title: 'Schedule & Time', desc: 'Set your coaching preferences' },
+              { step: 4, title: 'Special Needs', desc: 'Any specific requirements?' }
+            ].map((item) => (
+              <div key={item.step} className={`flex gap-3 p-3 rounded-lg transition-colors ${
+                currentStep === item.step 
+                  ? 'bg-primary/10 border border-primary/20' 
+                  : currentStep > item.step 
+                    ? 'bg-accent/10 border border-accent/20' 
+                    : 'bg-muted/30 border border-border'
+              }`}>
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  currentStep === item.step 
+                    ? 'bg-primary text-primary-foreground' 
+                    : currentStep > item.step 
+                      ? 'bg-accent text-accent-foreground' 
+                      : 'bg-muted text-muted-foreground'
+                }`}>
+                  {currentStep > item.step ? '✓' : item.step}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium ${
+                    currentStep >= item.step ? 'text-foreground' : 'text-muted-foreground'
+                  }`}>
+                    {item.title}
+                  </p>
+                  <p className={`text-xs ${
+                    currentStep >= item.step ? 'text-muted-foreground' : 'text-muted-foreground/70'
+                  }`}>
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Current Step Summary */}
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <h3 className="text-sm font-medium mb-2">Current Step</h3>
+            <p className="text-xs text-muted-foreground">
+              {currentStep === 1 && "Add your existing technical skills to help us understand your background."}
+              {currentStep === 2 && "Describe what you want to learn or achieve in your learning journey."}
+              {currentStep === 3 && "Choose how often you'd like coaching sessions and time commitment."}
+              {currentStep === 4 && "Let us know if you have any special learning needs or preferences."}
+            </p>
+          </div>
         </div>
       </div>
     </div>
