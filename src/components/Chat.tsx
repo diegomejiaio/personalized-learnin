@@ -100,14 +100,24 @@ export default function Chat({ context, userProfile, onDataCollection, className
   }
 
   const generateResponse = async (userInput: string): Promise<string> => {
-    const contextPrompt = getContextPrompt(userInput)
-    const prompt = spark.llmPrompt`${contextPrompt}
+    try {
+      // Check if spark global is available
+      if (typeof spark === 'undefined') {
+        throw new Error('Spark API not available')
+      }
+      
+      const contextPrompt = getContextPrompt(userInput)
+      const prompt = spark.llmPrompt`${contextPrompt}
 
 User input: "${userInput}"
 
 Respond as a helpful AI learning coach. Keep responses conversational, encouraging, and actionable. If appropriate, suggest specific next steps or ask follow-up questions to better understand their needs.`
 
-    return await spark.llm(prompt, 'gpt-4o-mini')
+      return await spark.llm(prompt, 'gpt-4o-mini')
+    } catch (error) {
+      console.error('Error in generateResponse:', error)
+      throw error
+    }
   }
 
   const getContextPrompt = (userInput: string): string => {

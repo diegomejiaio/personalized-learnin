@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
+import { Toaster } from '@/components/ui/sonner'
 import ConversationalOnboarding from './components/ConversationalOnboarding'
 import Dashboard from './components/Dashboard'
 
@@ -23,10 +24,20 @@ function App() {
   }
 
   if (!onboardingComplete || !userProfile) {
-    return <ConversationalOnboarding onComplete={handleOnboardingComplete} />
+    return (
+      <>
+        <ConversationalOnboarding onComplete={handleOnboardingComplete} />
+        <Toaster />
+      </>
+    )
   }
 
-  return <Dashboard userProfile={userProfile} />
+  return (
+    <>
+      <Dashboard userProfile={userProfile} />
+      <Toaster />
+    </>
+  )
 }
 
 export default App
