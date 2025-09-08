@@ -220,7 +220,7 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
                 {/* Skill Suggestions */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium text-muted-foreground">Popular skills to get you started:</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {[
                       'Azure', 'Kubernetes', 'React', 'Python'
                     ].filter(suggestion => !skills.includes(suggestion)).map((suggestion) => (
@@ -228,7 +228,7 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
                         key={suggestion}
                         variant="outline"
                         size="sm"
-                        className="h-8 text-xs justify-start px-2 hover:bg-primary/10 hover:border-primary/30"
+                        className="h-8 text-xs px-2 hover:bg-primary/10 hover:border-primary/30"
                         onClick={() => addSuggestedSkill(suggestion)}
                       >
                         <Plus className="w-3 h-3 mr-1" />
