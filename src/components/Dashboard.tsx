@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { GraduationCap, Target, Clock, Users, CheckCircle, ArrowRight, Play, User, Circle } from '@phosphor-icons/react'
+import { GraduationCap, Target, Clock, Users, CheckCircle, ArrowRight, Play, User, Circle, ArrowCounterClockwise } from '@phosphor-icons/react'
 import { UserProfile } from '../App'
 import LearningPath from './LearningPath'
 import Assessments from './Assessments'
@@ -35,6 +35,14 @@ export default function Dashboard({ userProfile }: DashboardProps) {
     nextMilestone: 'Azure Fundamentals Assessment',
     estimatedCompletion: '2 weeks'
   })
+
+  const [, setUserProfile] = useKV<UserProfile | null>('user-profile', null)
+  const [, setOnboardingComplete] = useKV('onboarding-complete', false)
+
+  const handleResetSetup = () => {
+    setUserProfile(null)
+    setOnboardingComplete(false)
+  }
 
   const progressPercentage = (learningProgress.completedModules / learningProgress.totalModules) * 100
 
@@ -130,8 +138,21 @@ export default function Dashboard({ userProfile }: DashboardProps) {
         {/* Skills Overview */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-lg">Your Skills</CardTitle>
-            <CardDescription>Current expertise and learning goals</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Your Skills</CardTitle>
+                <CardDescription>Current expertise and learning goals</CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleResetSetup}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ArrowCounterClockwise className="w-4 h-4 mr-2" />
+                Reset Setup
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
