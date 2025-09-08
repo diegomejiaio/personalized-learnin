@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Bot, User, Send, Sparkles } from '@phosphor-icons/react'
+import { Robot, User, ArrowUp, Star } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 export interface ChatMessage {
@@ -177,7 +177,7 @@ Be supportive, knowledgeable, and practical in your responses.`
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Star className="w-4 h-4 text-primary" />
             </div>
             AI Learning Coach
           </CardTitle>
@@ -197,7 +197,7 @@ Be supportive, knowledgeable, and practical in your responses.`
                 {message.role === 'assistant' && (
                   <Avatar className="w-8 h-8 shrink-0">
                     <AvatarFallback className="bg-primary/10">
-                      <Bot className="w-4 h-4 text-primary" />
+                      <Robot className="w-4 h-4 text-primary" />
                     </AvatarFallback>
                   </Avatar>
                 )}
@@ -225,7 +225,7 @@ Be supportive, knowledgeable, and practical in your responses.`
               <div className="flex gap-3 justify-start">
                 <Avatar className="w-8 h-8 shrink-0">
                   <AvatarFallback className="bg-primary/10">
-                    <Bot className="w-4 h-4 text-primary" />
+                    <Robot className="w-4 h-4 text-primary" />
                   </AvatarFallback>
                 </Avatar>
                 <div className="bg-muted px-3 py-2 rounded-lg text-sm">
@@ -254,7 +254,7 @@ Be supportive, knowledgeable, and practical in your responses.`
               disabled={!input.trim() || isLoading}
               size="icon"
             >
-              <Send className="w-4 h-4" />
+              <ArrowUp className="w-4 h-4" />
             </Button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MessageCircle, X, Minus } from '@phosphor-icons/react'
+import { Circle, X, Minus } from '@phosphor-icons/react'
 import { UserProfile } from '../App'
 import Chat from './Chat'
 
@@ -36,7 +36,7 @@ export default function FloatingAICoach({ userProfile }: FloatingAICoachProps) {
           size="lg"
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
         >
-          <MessageCircle className="w-6 h-6" />
+          <Circle className="w-6 h-6" />
           <span className="sr-only">Open AI Coach</span>
         </Button>
       )}
@@ -48,7 +48,7 @@ export default function FloatingAICoach({ userProfile }: FloatingAICoachProps) {
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-primary" />
+                  <Circle className="w-4 h-4 text-primary" />
                 </div>
                 AI Learning Coach
               </CardTitle>
@@ -90,7 +90,7 @@ export default function FloatingAICoach({ userProfile }: FloatingAICoachProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-primary" />
+                  <Circle className="w-4 h-4 text-primary" />
                 </div>
                 <span className="font-medium">AI Coach</span>
               </div>

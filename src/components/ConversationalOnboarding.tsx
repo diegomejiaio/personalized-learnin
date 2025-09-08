@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Bot, User, Plus, X, ArrowRight } from '@phosphor-icons/react'
+import { Robot, User, Plus, X, ArrowRight } from '@phosphor-icons/react'
 import { UserProfile } from '../App'
 
 interface Message {
@@ -184,7 +184,7 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
 
   const getBotAvatar = () => (
     <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-      <Bot className="w-5 h-5 text-primary" />
+      <Robot className="w-5 h-5 text-primary" />
     </div>
   )
 

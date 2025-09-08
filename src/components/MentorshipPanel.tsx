@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Users, Clock, Star, MessageCircle, CheckCircle, Calendar } from '@phosphor-icons/react'
+import { Users, Clock, Star, Circle, CheckCircle, Calendar } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { UserProfile } from '../App'
@@ -313,7 +313,7 @@ export default function MentorshipPanel({ userProfile }: MentorshipPanelProps) {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button variant="outline" className="flex-1">
-                          <MessageCircle className="w-4 h-4 mr-2" />
+                          <Circle className="w-4 h-4 mr-2" />
                           View Profile
                         </Button>
                       </DialogTrigger>
