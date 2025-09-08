@@ -6,12 +6,13 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { GraduationCap, Target, Clock, Users, CheckCircle, ArrowRight, Play, User } from '@phosphor-icons/react'
+import { GraduationCap, Target, Clock, Users, CheckCircle, ArrowRight, Play, User, MessageCircle } from '@phosphor-icons/react'
 import { UserProfile } from '../App'
 import LearningPath from './LearningPath'
 import Assessments from './Assessments'
 import ShadowOpportunities from './ShadowOpportunities'
 import MentorshipPanel from './MentorshipPanel'
+import Chat from './Chat'
 
 interface DashboardProps {
   userProfile: UserProfile
@@ -153,7 +154,7 @@ export default function Dashboard({ userProfile }: DashboardProps) {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="learning-path" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="learning-path" className="flex items-center gap-2">
               <GraduationCap className="w-4 h-4" />
               Learning Path
@@ -169,6 +170,10 @@ export default function Dashboard({ userProfile }: DashboardProps) {
             <TabsTrigger value="mentorship" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Mentorship
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" />
+              AI Coach
             </TabsTrigger>
           </TabsList>
 
@@ -186,6 +191,67 @@ export default function Dashboard({ userProfile }: DashboardProps) {
 
           <TabsContent value="mentorship">
             <MentorshipPanel userProfile={userProfile} />
+          </TabsContent>
+
+          <TabsContent value="chat">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Chat 
+                  context="dashboard" 
+                  userProfile={userProfile}
+                  className="h-[600px]"
+                />
+              </div>
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Quick Actions</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Button variant="outline" className="w-full justify-start">
+                      Ask about my progress
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      Get study recommendations
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      Explain a concept
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      Find learning resources
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">AI Coach Features</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-accent" />
+                      <span>Personalized guidance</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-accent" />
+                      <span>Progress tracking</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-accent" />
+                      <span>Study strategy tips</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-accent" />
+                      <span>Concept explanations</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-accent" />
+                      <span>Resource recommendations</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

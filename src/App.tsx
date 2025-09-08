@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
-import Onboarding from './components/Onboarding'
+import ConversationalOnboarding from './components/ConversationalOnboarding'
 import Dashboard from './components/Dashboard'
 
 export interface UserProfile {
@@ -23,7 +23,7 @@ function App() {
   }
 
   if (!onboardingComplete || !userProfile) {
-    return <Onboarding onComplete={handleOnboardingComplete} />
+    return <ConversationalOnboarding onComplete={handleOnboardingComplete} />
   }
 
   return <Dashboard userProfile={userProfile} />
