@@ -201,7 +201,7 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
       <div className="flex gap-3 items-start animate-in fade-in-50 duration-500">
         {getUserAvatar()}
         <Card className="flex-1">
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="px-4 py-2 space-y-4">
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div className="flex gap-2">
@@ -382,7 +382,7 @@ export default function ConversationalOnboarding({ onComplete }: ConversationalO
             <div key={message.id} className={`flex gap-3 items-start animate-in fade-in-50 duration-500`}>
               {message.type === 'bot' ? getBotAvatar() : getUserAvatar()}
               <Card className={`flex-1 ${message.type === 'bot' ? 'bg-primary/5 border-primary/20' : ''}`}>
-                <CardContent className="p-4">
+                <CardContent className="px-4 py-2">
                   {typeof message.content === 'string' ? (
                     <p className="text-sm leading-relaxed">{message.content}</p>
                   ) : (

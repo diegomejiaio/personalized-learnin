@@ -194,7 +194,7 @@ Be supportive, knowledgeable, and practical in your responses.`
                 )}
                 <div
                   className={cn(
-                    "max-w-[80%] px-4 py-3 rounded-lg text-sm",
+                    "max-w-[80%] px-4 py-2 rounded-lg text-sm",
                     message.role === 'user'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted'
@@ -218,7 +218,7 @@ Be supportive, knowledgeable, and practical in your responses.`
                     <Bot className="w-4 h-4 text-primary" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-muted px-4 py-3 rounded-lg text-sm">
+                <div className="bg-muted px-4 py-2 rounded-lg text-sm">
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
